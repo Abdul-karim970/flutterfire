@@ -38,27 +38,44 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static const userCollection = 'user3';
   @override
   Widget build(BuildContext context) {
-    // var akRef = db.collection(userCollection).doc('AK');
-    // akRef.snapshots(includeMetadataChanges: false).listen((event) {
-    //   print('data has written: ${event.data()}');
-    // });
-
-    final cities = db.collection("cities");
-    final myCities = db.collection('MyCities');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
+        child: Column(),
+      ),
+    );
+  }
+}
+
+
+
+/**
+ *
+class City {
+  int postalNo;
+  String cityName;
+  City({required this.postalNo, required this.cityName});
+} 
+
+
+   // var akRef = db.collection(userCollection).doc('AK');
+    // akRef.snapshots(includeMetadataChanges: false).listen((event) {
+    //   print('data has written: ${event.data()}');
+    // });
+
+ Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             ElevatedButton(
                 onPressed: () async {
+                  //     final cities = db.collection("cities");
+                  // final myCities = db.collection('MyCities');
+
                   // var docRef =
                   //     db.collection(userCollection).doc('uXgbKRNn9fo4JreZK4Sx');
                   // docRef
@@ -289,14 +306,4 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 child: const Text('Fetch')),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class City {
-  int postalNo;
-  String cityName;
-  City({required this.postalNo, required this.cityName});
-}
+        ) */
