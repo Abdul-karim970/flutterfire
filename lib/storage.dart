@@ -20,7 +20,7 @@ class _StorageState extends State<Storage> {
   Widget build(BuildContext context) {
     final storageRef = FirebaseStorage.instance.ref();
     final imageFolderRef = storageRef.child('image');
-    final imageFolder = storageRef.child('Folder');
+    // final imageFolder = storageRef.child('Folder');
 
     return Scaffold(
         appBar: AppBar(
@@ -54,8 +54,8 @@ class _StorageState extends State<Storage> {
                               print(e.toString());
                             }
                           }
-                           * 
-                           * 
+                           *
+                           *
                            */
 
                   ImagePicker imagePicker = ImagePicker();

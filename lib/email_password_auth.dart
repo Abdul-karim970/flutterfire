@@ -117,6 +117,7 @@ class _EmailPasswordAuthPageState extends State<EmailPasswordAuthPage> {
                 ElevatedButton(
                     onPressed: () async {
                       var credential = await signInWithGoogle();
+                      // ignore: use_build_context_synchronously
                       Navigator.push(
                           context,
                           CupertinoPageRoute(
@@ -124,14 +125,14 @@ class _EmailPasswordAuthPageState extends State<EmailPasswordAuthPage> {
                               settings:
                                   RouteSettings(arguments: credential.user)));
                     },
-                    child: Text('Google')),
+                    child: const Text('Google')),
                 ElevatedButton(
                     onPressed: () {
                       final firebaseInst = FirebaseAuth.instance;
                       firebaseInst.sendPasswordResetEmail(
                           email: emailFieldController.text);
                     },
-                    child: Text('Reset Password')),
+                    child: const Text('Reset Password')),
               ],
             ),
           ),

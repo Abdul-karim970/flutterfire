@@ -27,6 +27,7 @@ class _FireStoreState extends State<FireStore> {
         children: <Widget>[
           ElevatedButton(
               onPressed: () async {
+                // var db = FirebaseFirestore.instance;
                 //     final cities = db.collection("cities");
                 // final myCities = db.collection('MyCities');
 

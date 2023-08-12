@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,12 +32,17 @@ class _DownloadState extends State<Download> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SizedBox(
-              width: 200,
-              height: 200,
-              child: Builder(
-                builder: (context) => image,
-              ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                const SizedBox(
+                  width: 200,
+                  height: 200,
+                ),
+                Builder(
+                  builder: (context) => image,
+                ),
+              ],
             ),
             ElevatedButton(
                 onPressed: () async {
@@ -48,7 +51,22 @@ class _DownloadState extends State<Download> {
                   });
                   try {
                     var data = await imageRef.getDownloadURL();
-                    image = Image.network(data);
+                    image = Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                          color: Colors.blueGrey.shade100,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black38,
+                              blurRadius: 5,
+                              offset: Offset(3, 3),
+                            )
+                          ],
+                          image: DecorationImage(
+                              fit: BoxFit.fill, image: NetworkImage(data))),
+                    );
                     setState(() {});
                   } catch (e) {
                     ScaffoldMessenger.of(context)
@@ -84,10 +102,26 @@ class _DownloadState extends State<Download> {
                       }
 
                       setState(() {
-                        image = Image.network(imageUrl);
+                        image = Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                              color: Colors.blueGrey.shade100,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black38,
+                                  blurRadius: 5,
+                                  offset: Offset(3, 3),
+                                )
+                              ],
+                              image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: NetworkImage(imageUrl))),
+                        );
                       });
 
-                      await Future.delayed(const Duration(seconds: 3));
+                      await Future.delayed(const Duration(seconds: 4));
                     }
                   }
                 },
@@ -120,12 +154,12 @@ class _DownloadState extends State<Download> {
                             CupertinoPageRoute(
                               settings:
                                   RouteSettings(arguments: withMobileNumber),
-                              builder: (context) => PhoneSignedInPage(),
+                              builder: (context) => const PhoneSignedInPage(),
                             ))
                         : print(value);
                   });
                 },
-                child: Text('Phone Waqas'))
+                child: const Text('Phone Waqas'))
           ],
         ),
       ),
