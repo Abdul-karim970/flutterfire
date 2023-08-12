@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire/FCM.dart';
 import 'package:flutterfire/download.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -33,7 +34,7 @@ class _StorageState extends State<Storage> {
           children: [
             Text(
               status,
-              style: TextStyle(fontSize: 30),
+              style: const TextStyle(fontSize: 30),
             ),
             ElevatedButton(
                 onPressed: () async {
@@ -95,9 +96,14 @@ class _StorageState extends State<Storage> {
                 child: const Text('Upload')),
             ElevatedButton(
                 onPressed: () => Navigator.of(context).push(CupertinoPageRoute(
-                      builder: (context) => Download(),
+                      builder: (context) => const Download(),
                     )),
-                child: Text('Go to Download'))
+                child: const Text('Go to Download')),
+            ElevatedButton(
+                onPressed: () => Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => const Notifications(),
+                    )),
+                child: const Text('Notification Page')),
           ],
         )));
   }
