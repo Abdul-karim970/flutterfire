@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire/download.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Storage extends StatefulWidget {
@@ -17,7 +19,7 @@ class _StorageState extends State<Storage> {
   @override
   Widget build(BuildContext context) {
     final storageRef = FirebaseStorage.instance.ref();
-    final imageRef = storageRef.child('image0');
+    final imageFolderRef = storageRef.child('image');
     final imageFolder = storageRef.child('Folder');
 
     return Scaffold(
@@ -62,14 +64,9 @@ class _StorageState extends State<Storage> {
 
                   final pickedImages = await imagePicker.pickMultiImage();
                   for (var image in pickedImages) {
-                    String pickedImageName = image.name;
-                    pickedImageName = 'picked_image_no: ${count++}';
                     final file = File(image.path);
                     try {
-                      final innerFolder = imageFolder.child('innerFOlder');
-
-                      final pickedImageRef = innerFolder.child(pickedImageName);
-
+                      final pickedImageRef = imageFolderRef.child(image.name);
                       var task = pickedImageRef.putFile(file);
                       task.snapshotEvents.listen((event) {
                         switch (event.state) {
@@ -96,7 +93,11 @@ class _StorageState extends State<Storage> {
                   }
                 },
                 child: const Text('Upload')),
-                ElevatedButton(onPressed: , child: child)
+            ElevatedButton(
+                onPressed: () => Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => Download(),
+                    )),
+                child: Text('Go to Download'))
           ],
         )));
   }
