@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire/signedIn_via_phone_page.dart';
 
 import 'email_password_auth.dart';
 import 'phone_auth_page.dart';
@@ -103,10 +105,87 @@ class _DownloadState extends State<Download> {
                     CupertinoPageRoute(
                       builder: (context) => const PhoneAuthPage(),
                     )),
-                child: const Text('Go to Phone Auth'))
+                child: const Text('Go to Phone Auth')),
+            ElevatedButton(
+                onPressed: () {
+                  AuthenticationWithMobileNumber withMobileNumber =
+                      AuthenticationWithMobileNumber();
+                  withMobileNumber
+                      .loginWithMobileNumber(mobileNumber: '+923306861356')
+                      .then((value) {
+                    print('$value isTrue?');
+                    value
+                        ? Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              settings:
+                                  RouteSettings(arguments: withMobileNumber),
+                              builder: (context) => PhoneSignedInPage(),
+                            ))
+                        : print(value);
+                  });
+                },
+                child: Text('Phone Waqas'))
           ],
         ),
       ),
     );
+  }
+}
+
+class AuthenticationWithMobileNumber {
+  String verificationCode = '';
+
+  var auth = FirebaseAuth.instance;
+
+  Future<bool> loginWithMobileNumber({
+    required String mobileNumber,
+  }) async {
+    try {
+      await auth.verifyPhoneNumber(
+        timeout: const Duration(minutes: 2),
+        phoneNumber: mobileNumber,
+        verificationCompleted: (phoneAuthCredential) async {
+          await auth.signInWithCredential(phoneAuthCredential).then((value) {
+            print("Login suceess fully");
+            print(value.user!.phoneNumber);
+            print(value.user!.uid);
+          });
+        },
+        verificationFailed: (error) async {
+          print('This is the error ${error.code}');
+        },
+        codeSent: (verificationId, forceResendingToken) async {
+          verificationCode = verificationId;
+          print('code has send');
+        },
+        codeAutoRetrievalTimeout: (verificationId) {
+          verificationCode = verificationId;
+          print('code has send and verification id is $verificationId');
+        },
+      );
+      return true;
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+      return false;
+    }
+  }
+
+  Future<bool> verifyTheOTP(String sms) async {
+    print(verificationCode);
+
+    try {
+      PhoneAuthCredential authCredential = PhoneAuthProvider.credential(
+          verificationId: verificationCode, smsCode: sms);
+      print(authCredential.verificationId);
+      await auth.signInWithCredential(authCredential).then((value) {
+        print('successfully login');
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+
+    // return credential.user != null ? true : false;
   }
 }
