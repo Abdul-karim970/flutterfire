@@ -1,25 +1,48 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 
-class Notifications extends StatefulWidget {
-  const Notifications({super.key});
+class NotificationPageClient extends StatefulWidget {
+  const NotificationPageClient({super.key});
 
   @override
-  State<Notifications> createState() => _NotificationsState();
+  State<NotificationPageClient> createState() => _NotificationPageClientState();
 }
 
-class _NotificationsState extends State<Notifications> {
-  // Future<void> setUpIntrectingMessages() async {
-  //   final fireMessagesInstance = await FirebaseMessaging.instance;
-  //   RemoteMessage? initialMessage =
-  //       await fireMessagesInstance.getInitialMessage();
+class _NotificationPageClientState extends State<NotificationPageClient> {
+  Future<void> setUpInteractingMessaging() async {
+    Future<void> respondToMessage(RemoteMessage message) async {
+      print('I\'m not going to Any screen, run your default navigation');
+    }
 
-  //   FirebaseMessaging.onMessageOpenedApp.listen((remoteMessage) {});
-  //   FirebaseMessaging.onBackgroundMessage((message) {
+    RemoteMessage? remoteMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (remoteMessage != null) {
+      respondToMessage(remoteMessage);
+    }
+    FirebaseMessaging.onMessageOpenedApp.listen(respondToMessage);
 
-  //   });
-  // }
+    FirebaseMessaging.onBackgroundMessage(
+      respondToMessage,
+    );
+
+    FirebaseMessaging.onMessage.listen(respondToMessage);
+    FirebaseMessaging.instance.subscribeToTopic('topic');
+    FirebaseMessaging.instance.unsubscribeFromTopic('topic');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setUpInteractingMessaging();
+
+    // Push Notification Stuff
+    var db = FirebaseFirestore.instance;
+    FirebaseMessaging.instance.getToken().then((token) {
+      db.collection('Notification').doc('Admin').update({'admin_token': token});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
