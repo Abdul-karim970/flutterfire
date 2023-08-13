@@ -5,7 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire/Notification/appointment_modal.dart';
 
-import '../firebase_connstants.dart';
+import 'firebase_connstants.dart';
 import 'package:http/http.dart' as http;
 
 class NotificationsPageAdmin extends StatefulWidget {

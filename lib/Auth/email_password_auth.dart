@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterfire/Email_password_after_auth_page.dart';
+import 'package:flutterfire/Auth/Email_password_after_auth_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class EmailPasswordAuthPage extends StatefulWidget {

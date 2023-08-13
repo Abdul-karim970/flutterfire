@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterfire/signedIn_via_phone_page.dart';
+import 'package:flutterfire/Auth/signedIn_via_phone_page.dart';
 
-import 'email_password_auth.dart';
-import 'phone_auth_page.dart';
+import '../Auth/email_password_auth.dart';
+import '../Auth/phone_auth_page.dart';
 
 class Download extends StatefulWidget {
   const Download({super.key});

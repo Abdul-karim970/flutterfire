@@ -4,10 +4,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire/Notification/FCM_client.dart';
-import 'package:flutterfire/download.dart';
+import 'package:flutterfire/Storage/download.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'Notification/FCM_admin.dart';
+import '../Notification/FCM_admin.dart';
 
 class Storage extends StatefulWidget {
   const Storage({super.key});
