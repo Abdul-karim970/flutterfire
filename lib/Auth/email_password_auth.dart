@@ -2,10 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire/Auth/Email_password_after_auth_page.dart';
+import 'package:flutterfire/Auth/constants.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EmailPasswordAuthPage extends StatefulWidget {
   const EmailPasswordAuthPage({super.key});
+  static const name = 'Auth';
 
   @override
   State<EmailPasswordAuthPage> createState() => _EmailPasswordAuthPageState();
@@ -18,6 +21,7 @@ class _EmailPasswordAuthPageState extends State<EmailPasswordAuthPage> {
   @override
   void initState() {
     super.initState();
+
     passwordFieldController = TextEditingController();
     emailFieldController = TextEditingController();
   }
@@ -35,6 +39,7 @@ class _EmailPasswordAuthPageState extends State<EmailPasswordAuthPage> {
 
     return Scaffold(
         appBar: AppBar(
+          title: const Text('Email and Google Auth'),
           backgroundColor: Colors.green.shade200,
         ),
         body: Center(
@@ -55,18 +60,23 @@ class _EmailPasswordAuthPageState extends State<EmailPasswordAuthPage> {
                 ),
                 ElevatedButton(
                     onPressed: () async {
+                      SharedPreferences sharedPreferences =
+                          await SharedPreferences.getInstance();
                       try {
                         final userCredential = await firebaseInstance
                             .createUserWithEmailAndPassword(
                                 email: emailFieldController.text,
                                 password: passwordFieldController.text);
-                        if (mounted) {
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (context) => const AfterAuthPage(),
-                                  settings: RouteSettings(
-                                      arguments: userCredential.user)));
+                        if (userCredential.user != null) {
+                          sharedPreferences.setBool(isLoggedIn, true);
+                          if (mounted) {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) => const AfterAuthPage(),
+                                    settings: RouteSettings(
+                                        arguments: userCredential.user)));
+                          }
                         }
                       } on FirebaseAuthException catch (exception) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -86,18 +96,25 @@ class _EmailPasswordAuthPageState extends State<EmailPasswordAuthPage> {
                     child: const Text('SignUp')),
                 ElevatedButton(
                     onPressed: () async {
+                      SharedPreferences sharedPreferences =
+                          await SharedPreferences.getInstance();
                       try {
                         final userCredential =
                             await firebaseInstance.signInWithEmailAndPassword(
                                 email: emailFieldController.text,
                                 password: passwordFieldController.text);
-                        if (mounted) {
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (context) => const AfterAuthPage(),
-                                  settings: RouteSettings(
-                                      arguments: userCredential.user)));
+                        if (userCredential.user != null) {
+                          sharedPreferences.setBool(isLoggedIn, true);
+                          if (mounted) {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) {
+                                      return const AfterAuthPage();
+                                    },
+                                    settings: RouteSettings(
+                                        arguments: userCredential.user)));
+                          }
                         }
                       } on FirebaseAuthException catch (exception) {
                         // if (e.code == 'user-not-found') {
@@ -116,14 +133,26 @@ class _EmailPasswordAuthPageState extends State<EmailPasswordAuthPage> {
                     child: const Text('SignIn')),
                 ElevatedButton(
                     onPressed: () async {
+                      SharedPreferences sharedPreference =
+                          await SharedPreferences.getInstance();
+
                       var credential = await signInWithGoogle();
-                      // ignore: use_build_context_synchronously
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => const AfterAuthPage(),
-                              settings:
-                                  RouteSettings(arguments: credential.user)));
+                      if (credential.user != null) {
+                        sharedPreference.setBool(isLoggedIn, true);
+                        if (mounted) {
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) {
+                                    return const AfterAuthPage();
+                                  },
+                                  settings: RouteSettings(
+                                      arguments: credential.user)));
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Sign in failed')));
+                      }
                     },
                     child: const Text('Google')),
                 ElevatedButton(

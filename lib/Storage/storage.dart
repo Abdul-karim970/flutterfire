@@ -8,6 +8,7 @@ import 'package:flutterfire/Storage/download.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../Notification/FCM_admin.dart';
+import '../Shared_prefrence/shared_preferance.dart';
 
 class Storage extends StatefulWidget {
   const Storage({super.key});
@@ -33,8 +34,6 @@ class _StorageState extends State<Storage> {
     FirebaseMessaging.onMessageOpenedApp.listen(respondToMessage);
 
     FirebaseMessaging.onMessage.listen(respondToMessage);
-    // FirebaseMessaging.instance.subscribeToTopic('topic');
-    // FirebaseMessaging.instance.unsubscribeFromTopic('topic');
   }
 
   @override
@@ -64,6 +63,13 @@ class _StorageState extends State<Storage> {
               status,
               style: const TextStyle(fontSize: 30),
             ),
+            ElevatedButton(
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MySharedPreference(),
+                    )),
+                child: Text('Go to Shared preference')),
             ElevatedButton(
                 onPressed: () async {
                   /**

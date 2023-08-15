@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire/Auth/constants.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AfterAuthPage extends StatefulWidget {
   const AfterAuthPage({super.key});
@@ -17,6 +19,7 @@ class _AfterAuthPageState extends State<AfterAuthPage> {
 
     return Scaffold(
       appBar: AppBar(
+        title: const Text('After Auth Page'),
         backgroundColor: Colors.green.shade200,
       ),
       body: Align(
@@ -30,8 +33,11 @@ class _AfterAuthPageState extends State<AfterAuthPage> {
             ElevatedButton(
                 onPressed: () async {
                   var firebaseInstance = await FirebaseAuth.instance;
+                  SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
                   firebaseInstance.signOut();
                   GoogleSignIn().signOut();
+                  sharedPreferences.setBool(isLoggedIn, false);
                   Navigator.pop(context);
                 },
                 child: Text('SignOut'))

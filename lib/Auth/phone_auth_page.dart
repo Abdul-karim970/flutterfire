@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire/Auth/constants.dart';
 import 'package:flutterfire/Auth/signedIn_via_phone_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PhoneAuthPage extends StatefulWidget {
   const PhoneAuthPage({super.key});
@@ -47,16 +49,25 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                     verificationCompleted: (phoneAuthCredential) {
                       auth
                           .signInWithCredential(phoneAuthCredential)
-                          .then((user) => {
-                                Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      settings:
-                                          RouteSettings(arguments: user.user),
-                                      builder: (context) =>
-                                          const PhoneSignedInPage(),
-                                    ))
-                              });
+                          .then((user) async {
+                        SharedPreferences sharedPreferences =
+                            await SharedPreferences.getInstance();
+                        if (mounted) {
+                          sharedPreferences.setString(
+                              userPhone, user.user!.phoneNumber ?? '');
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                settings: RouteSettings(
+                                    arguments: user.user!.phoneNumber),
+                                builder: (context) {
+                                  sharedPreferences.setBool(
+                                      isLoggedInWithPhone, true);
+                                  return const PhoneSignedInPage();
+                                },
+                              ));
+                        }
+                      });
                     },
                     verificationFailed: (error) => ScaffoldMessenger.of(context)
                         .showSnackBar(SnackBar(
@@ -91,15 +102,28 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                                         auth
                                             .signInWithCredential(
                                                 phoneAuthCredential)
-                                            .then((user) {
-                                          Navigator.push(
-                                              context,
-                                              CupertinoPageRoute(
-                                                settings: RouteSettings(
-                                                    arguments: user.user),
-                                                builder: (context) =>
-                                                    const PhoneSignedInPage(),
-                                              ));
+                                            .then((user) async {
+                                          SharedPreferences sharedPreferences =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          if (mounted) {
+                                            sharedPreferences.setString(
+                                                userPhone,
+                                                user.user!.phoneNumber ?? '');
+                                            Navigator.push(
+                                                context,
+                                                CupertinoPageRoute(
+                                                  settings: RouteSettings(
+                                                      arguments: user
+                                                          .user!.phoneNumber),
+                                                  builder: (context) {
+                                                    sharedPreferences.setBool(
+                                                        isLoggedInWithPhone,
+                                                        true);
+                                                    return const PhoneSignedInPage();
+                                                  },
+                                                ));
+                                          }
                                         });
                                       } on FirebaseAuthException catch (e) {
                                         ScaffoldMessenger.of(context)

@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire/Auth/Email_password_after_auth_page.dart';
+import 'package:flutterfire/Auth/constants.dart';
 import 'package:flutterfire/Auth/signedIn_via_phone_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Auth/email_password_auth.dart';
 import '../Auth/phone_auth_page.dart';
@@ -26,6 +29,7 @@ class _DownloadState extends State<Download> {
     final imageFolderRef = storageRef.child('image');
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Downloads'),
         backgroundColor: Colors.green.shade200,
       ),
       body: Center(
@@ -127,39 +131,80 @@ class _DownloadState extends State<Download> {
                 },
                 child: const Text('Download All')),
             ElevatedButton(
-                onPressed: () => Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => const EmailPasswordAuthPage(),
-                    )),
-                child: const Text('Go to EmailAuth')),
-            ElevatedButton(
-                onPressed: () => Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => const PhoneAuthPage(),
-                    )),
-                child: const Text('Go to Phone Auth')),
-            ElevatedButton(
-                onPressed: () {
-                  AuthenticationWithMobileNumber withMobileNumber =
-                      AuthenticationWithMobileNumber();
-                  withMobileNumber
-                      .loginWithMobileNumber(mobileNumber: '+923306861356')
-                      .then((value) {
-                    print('$value isTrue?');
-                    value
-                        ? Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              settings:
-                                  RouteSettings(arguments: withMobileNumber),
-                              builder: (context) => const PhoneSignedInPage(),
-                            ))
-                        : print(value);
-                  });
+                onPressed: () async {
+                  var fireAuthInstance = FirebaseAuth.instance;
+                  SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
+                  if (mounted) {
+                    if (fireAuthInstance.currentUser != null) {
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            settings: RouteSettings(
+                                arguments: fireAuthInstance.currentUser),
+                            builder: (context) {
+                              if (sharedPreferences.getBool(isLoggedIn) ??
+                                  false) {
+                                return const AfterAuthPage();
+                              } else {
+                                return const EmailPasswordAuthPage();
+                              }
+                            },
+                          ));
+                    } else {
+                      Navigator.push(context, CupertinoPageRoute(
+                        builder: (context) {
+                          return const EmailPasswordAuthPage();
+                        },
+                      ));
+                    }
+                  }
                 },
-                child: const Text('Phone Waqas'))
+                child: const Text('Go Home Page')),
+            ElevatedButton(
+                onPressed: () async {
+                  SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
+                  if (mounted) {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          settings: RouteSettings(
+                              arguments:
+                                  sharedPreferences.getString(userPhone)),
+                          builder: (context) {
+                            if (sharedPreferences
+                                    .getBool(isLoggedInWithPhone) ??
+                                false) {
+                              return const PhoneSignedInPage();
+                            } else {
+                              return const PhoneAuthPage();
+                            }
+                          },
+                        ));
+                  }
+                },
+                child: const Text('Go Phone Home Page')),
+            // ElevatedButton(
+            //     onPressed: () {
+            //       AuthenticationWithMobileNumber withMobileNumber =
+            //           AuthenticationWithMobileNumber();
+            //       withMobileNumber
+            //           .loginWithMobileNumber(mobileNumber: '+923306861356')
+            //           .then((value) {
+            //         print('$value isTrue?');
+            //         value
+            //             ? Navigator.push(
+            //                 context,
+            //                 CupertinoPageRoute(
+            //                   settings:
+            //                       RouteSettings(arguments: withMobileNumber),
+            //                   builder: (context) => const PhoneSignedInPage(),
+            //                 ))
+            //             : print(value);
+            //       });
+            //     },
+            //     child: const Text('Phone Waqas'))
           ],
         ),
       ),

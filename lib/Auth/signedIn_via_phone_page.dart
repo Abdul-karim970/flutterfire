@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire/Auth/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Storage/download.dart';
 
@@ -13,9 +15,7 @@ class PhoneSignedInPage extends StatefulWidget {
 class _PhoneSignedInPageState extends State<PhoneSignedInPage> {
   @override
   Widget build(BuildContext context) {
-    var sms = TextEditingController();
-    final ob = ModalRoute.of(context)!.settings.arguments
-        as AuthenticationWithMobileNumber;
+    final sms = ModalRoute.of(context)!.settings.arguments as String;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green.shade200,
@@ -24,18 +24,23 @@ class _PhoneSignedInPageState extends State<PhoneSignedInPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            TextField(
-              controller: sms,
-              decoration: InputDecoration(border: OutlineInputBorder()),
-            ),
+            Text(sms),
+            // TextField(
+            //   controller: sms,
+            //   decoration: InputDecoration(border: OutlineInputBorder()),
+            // ),
+            // ElevatedButton(
+            //     onPressed: () {
+            //       ob.verifyTheOTP(sms.text);
+            //     },
+            //     child: Text('Verify')),
             ElevatedButton(
-                onPressed: () {
-                  ob.verifyTheOTP(sms.text);
-                },
-                child: Text('Verify')),
-            ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
                   FirebaseAuth.instance.signOut();
+                  sharedPreferences.setBool(isLoggedInWithPhone, false);
+                  sharedPreferences.setString(userPhone, '');
                   Navigator.pop(context);
                 },
                 child: const Text('SignOut'))
